@@ -47,6 +47,12 @@ async function run() {
       try {
         const user = req.body;
         const result = await userCollection.insertOne(user);
+        res
+          .status(201)
+          .json({
+            message: 1,
+            userId: result.insertedId,
+          });
       } catch (error) {
         console.error("Failed to insert user data:", error);
         res.status(500).json({ message: "Internal server error" });
@@ -69,9 +75,29 @@ async function run() {
       res.send(result)
     })
 
+    // get class by userEmail
+    app.get("/classByMail", async(req, res) => {
+      // console.log(req.query.email)
+      let query = {}
+      // console.log(query)
+      if(req.query?.email){
+        query = {email: req.query.email}
+      }
+      const cursor = cartsCollection.find(query)
+      const result = await cursor.toArray()
+      res.send(result)
+    });
+
     // get all trainer
     app.get('/trainer', async (req, res) => {
       const cursor = trainerCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+
+    // get all users
+    app.get('/users', async(req, res) => {
+      const cursor = userCollection.find()
       const result = await cursor.toArray()
       res.send(result)
     })
